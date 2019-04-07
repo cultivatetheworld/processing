@@ -139,15 +139,15 @@ test_X = test_X.reshape((test_X.shape[0], 10))
 inv_yhat = concatenate((yhat, test_X[:,-8:]), axis=1)
 inv_yhat = scaler.inverse_transform(inv_yhat)
 inv_yhat = inv_yhat[:,0:1] #changed from 0 to 0:2. Should be first 2 columns that contain the predictions
-print ("Output:", inv_yhat)
+print ("Output:", inv_yhat/5)
 #CHANGES HERE
 #invert scaling for actual
-#print(test_y)
+# print(test_y)
 test_y = test_y.reshape((len(test_y),1)) #changed 1 to 2
 inv_y = concatenate((test_y, test_X[:,-8:]), axis=1) #changed 7 to 6
 inv_y = scaler.inverse_transform(inv_y)
 inv_y = inv_y[:,0:1] #changed from 0 to 0:2. Should be first 2 columns that contain the predictions.
-print("Output: ", inv_y)
+print("Output: ", inv_y/5)
 #CHANGES HERE
 #calculate RMSE - CHANGED to output RMSE for each variable.
 rmse_1 = sqrt(mean_squared_error(inv_y[:,0], inv_yhat[:,0])) #RMSE for the first variable (pollution)
