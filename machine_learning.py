@@ -37,6 +37,14 @@ def parse(x):
 # print(dataset.head(5))
 # save to file
 # dataset.to_csv('weather.csv')
+yaml_file = open('model.yaml', 'r')
+loaded_model_yaml = yaml_file.read()
+yaml_file.close()
+loaded_model = model_from_yaml(loaded_model_yaml)
+# load weights into new model
+loaded_model.load_weights("model.h5")
+print("Loaded model from disk")
+
 tot_days = 365
 # load dataset
 dataset = read_csv('rdu-weather-history (1).csv', header=0, index_col=0)
@@ -129,9 +137,9 @@ pyplot.plot(history.history['val_loss'], label='test')
 pyplot.legend()
 pyplot.show()
 # make a prediction
-print("Input:")
-for i in test_X:
-  print (i)
+# print("Input:")
+# for i in test_X:
+  # print (i)
 yhat = model.predict(test_X)
 test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
 # invert scaling for forecast
@@ -139,7 +147,7 @@ test_X = test_X.reshape((test_X.shape[0], 10))
 inv_yhat = concatenate((yhat, test_X[:,-8:]), axis=1)
 inv_yhat = scaler.inverse_transform(inv_yhat)
 inv_yhat = inv_yhat[:,0:2] #changed from 0 to 0:2. Should be first 2 columns that contain the predictions
-print ("Output:", inv_yhat)
+# print ("Output:", inv_yhat)
 #CHANGES HERE
 #invert scaling for actual
 test_y = test_y.reshape((len(test_y),1)) #changed 1 to 2
@@ -152,3 +160,11 @@ inv_y = inv_y[:,0:2] #changed from 0 to 0:2. Should be first 2 columns that cont
 rmse_1 = sqrt(mean_squared_error(inv_y[:,0], inv_yhat[:,0])) #RMSE for the first variable (pollution)
 rmse_2 = sqrt(mean_squared_error(inv_y[:,1], inv_yhat[:,0])) #RMSE for the second variable (dew)
 print('Test RMSE: ', rmse_1, rmse_2)
+
+model_yaml = model.to_yaml()
+with open("model.yaml", "w") as yaml_file:
+    yaml_file.write(model_yaml)
+# serialize weights to HDF5
+model.save_weights("model.h5")
+print("Saved model to disk")
+
